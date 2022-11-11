@@ -44,6 +44,7 @@ app.MapPut("/hotels", async ([FromBody] Hotel hotel, IHotelRepository repos) =>
     return Results.NoContent();
 });
 
+
 app.MapDelete("/hotels/{id}", async (int id, IHotelRepository repos) =>
 {
     await repos.DeleteHotelAsync(id);
