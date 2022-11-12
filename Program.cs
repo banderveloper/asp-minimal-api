@@ -51,7 +51,15 @@ app.MapGet("/hotels/search/name/{query}", async (string query, IHotelRepository 
     .WithTags("Getters")
     .ExcludeFromDescription();
 
-app.MapPost("/hotels", async ([FromBody] Hotel hotel, IHotelRepository repos) =>
+
+app.MapGet("hotels/search/location/{coordinate}", async (Coordinate coordinate, IHotelRepository repos) =>
+    await repos.GetHotelsAsync(coordinate) is IEnumerable<Hotel> hotels
+        ? Results.Ok(hotels)
+        : Results.NotFound(Array.Empty<Hotel>()))
+    .ExcludeFromDescription();
+
+
+app.MapGet("/hotels", async ([FromBody] Hotel hotel, IHotelRepository repos) =>
     {
         await repos.InsertHotelAsync(hotel);
         await repos.SaveAsync();

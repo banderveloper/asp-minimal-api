@@ -1,3 +1,5 @@
+using System.Diagnostics.Contracts;
+
 namespace HotelsWebApi.Data
 {
     public class HotelRepository : IHotelRepository
@@ -13,11 +15,20 @@ namespace HotelsWebApi.Data
             await _context.Hotels.ToListAsync();
 
         public async Task<List<Hotel>> GetHotelsAsync(string name) =>
-            await _context.Hotels.Where(h=>h.Name.Contains(name)).ToListAsync();
+            await _context.Hotels.Where(h => h.Name.Contains(name)).ToListAsync();
+
+        public async Task<List<Hotel>> GetHotelsAsync(Coordinate coordinate) =>
+            await _context.Hotels.Where(hotel =>
+                hotel.Latitude > coordinate.Latitude - 1 &&
+                hotel.Latitude < coordinate.Latitude + 1 &&
+                hotel.Longitude > coordinate.Longitude - 1 &&
+                hotel.Longitude < coordinate.Longitude + 1
+            ).ToListAsync();
+
 
         public async Task<Hotel?> GetHotelAsync(int hotelId) =>
             await _context.Hotels.FindAsync(new object[] { hotelId });
-      
+
         public async Task InsertHotelAsync(Hotel hotel) =>
              await _context.Hotels.AddAsync(hotel);
 
@@ -30,14 +41,14 @@ namespace HotelsWebApi.Data
             hotelFromDb.Longitude = hotel.Longitude;
             hotelFromDb.Latitude = hotel.Latitude;
         }
-      
+
         public async Task DeleteHotelAsync(int hotelId)
         {
             var hotelFromDb = await _context.Hotels.FindAsync(new object[] { hotelId });
             if (hotelFromDb == null) return;
             _context.Hotels.Remove(hotelFromDb);
         }
-        public async Task SaveAsync() => 
+        public async Task SaveAsync() =>
             await _context.SaveChangesAsync();
 
 
@@ -57,6 +68,6 @@ namespace HotelsWebApi.Data
         {
             Dispose(true);
             GC.SuppressFinalize(this);
-        }   
+        }
     }
 }
