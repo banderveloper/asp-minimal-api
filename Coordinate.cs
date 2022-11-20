@@ -1,7 +1,3 @@
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
-using System.Diagnostics.Eventing.Reader;
-using System.Reflection;
-
 public record Coordinate(double Latitude, double Longitude)
 {
     private static bool TryParse(string input, out Coordinate? coordinate)
